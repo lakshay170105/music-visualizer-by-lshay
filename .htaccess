@@ -1,0 +1,80 @@
+# -------------------------------------------
+# L-SHAY Music Visualizer - InfinityFree Optimized
+# -------------------------------------------
+
+# -------------------------------------------
+# 1) Force HTTPS for InfinityFree
+# -------------------------------------------
+RewriteEngine On
+RewriteCond %{HTTPS} !=on
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+
+
+# -------------------------------------------
+# 3) Disable Directory Browsing
+# -------------------------------------------
+Options -Indexes
+
+# -------------------------------------------
+# 4) Protect Sensitive Files
+# -------------------------------------------
+<FilesMatch "(^\.env|config\.php|database\.php|db\.php|config\.js)">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# -------------------------------------------
+# 5) GZIP Compression (Only safe version)
+# -------------------------------------------
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/json
+</IfModule>
+
+# -------------------------------------------
+# 6) Browser Cache (InfinityFree-safe)
+# -------------------------------------------
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+</IfModule>
+
+# -------------------------------------------
+# 7) Modern Security Headers + Safe Browsing + HSTS
+# -------------------------------------------
+<IfModule mod_headers.c>
+    # Force HTTPS upgrade for all resources (mixed content fix)
+    Header always set Content-Security-Policy "upgrade-insecure-requests;"
+    
+    # Prevent MIME type sniffing
+    Header always set X-Content-Type-Options "nosniff"
+    
+    # XSS Protection (Chrome/Opera/Safari)
+    Header always set X-XSS-Protection "1; mode=block"
+    
+    # Prevent clickjacking
+    Header always set X-Frame-Options "SAMEORIGIN"
+    
+    # Referrer policy
+    Header always set Referrer-Policy "no-referrer-when-downgrade"
+    
+    # HSTS - Force HTTPS for 1 year (Chrome Safe Browsing)
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    
+    # Download protection
+    Header always set X-Download-Options "noopen"
+    
+    # Cross-domain policy
+    Header always set X-Permitted-Cross-Domain-Policies "none"
+</IfModule>
+
+# -------------------------------------------
+# 8) Error Pages — Safe on InfinityFree (Temporarily disabled for API testing)
+# -------------------------------------------
+# ErrorDocument 404 /index.html
+# ErrorDocument 403 /index.html
+# ErrorDocument 500 /index.html
